@@ -86,7 +86,7 @@ RSpec.describe Game, type: :model do
   end
 
   context '.status' do
-    before(:each) do
+    before do
       game_w_questions.finished_at = Time.now
       expect(game_w_questions.finished?).to be_truthy
     end
@@ -133,9 +133,7 @@ RSpec.describe Game, type: :model do
 
   describe '#answer_current_question!' do
     context 'answer is correct' do
-      before(:each) do
-        game_w_questions.answer_current_question!(game_w_questions.current_game_question.correct_answer_key)
-      end
+      before { game_w_questions.answer_current_question!(game_w_questions.current_game_question.correct_answer_key) }
 
       context 'answer is correct and question is last' do
         let!(:game_w_questions) { FactoryGirl.create(:game_with_questions, current_level: Question::QUESTION_LEVELS.max) }
@@ -174,9 +172,7 @@ RSpec.describe Game, type: :model do
       let!(:incorrect_answer_key) { ['a', 'b', 'c', 'd'].
         reject { |letter| letter == game_w_questions.current_game_question.correct_answer_key }.sample }
 
-      before(:each) do
-        game_w_questions.answer_current_question!(incorrect_answer_key)
-      end
+      before { game_w_questions.answer_current_question!(incorrect_answer_key) }
 
       it 'finishes the game' do
         expect(game_w_questions.finished?).to be true

@@ -80,12 +80,30 @@ RSpec.describe GamesController, type: :controller do
 
     it "kick from another's game #show" do
       anothers_game = FactoryGirl.create(:game_with_questions)
-      # вызываем экшен
+
       get :show, id: anothers_game.id
       # проверяем ответ
       expect(response.status).not_to eq(200) # статус не 200 ОК
-      expect(response).to redirect_to(root_path) # devise должен отправить на логин
+      expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to be # во flash должен быть прописана ошибка
+    end
+
+    it 'take_money before end of the game' do
+      game_w_questions.update_attributes(current_level: 5)
+
+      put :take_money, id: game_w_questions.id
+
+      game = assigns(:game)
+
+      expect(game.finished?).to be_truthy
+      expect(game.prize).to eq 1000
+
+      expect(response).to redirect_to(user_path(user))
+
+      user.reload
+      expect(user.balance).to eq 1000
+
+      expect(flash.empty?).to be_falsey
     end
   end
 end

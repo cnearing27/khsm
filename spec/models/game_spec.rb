@@ -130,4 +130,61 @@ RSpec.describe Game, type: :model do
       expect(game_w_questions.previous_level).to eq(-1)
     end
   end
+
+  describe '#answer_current_question!' do
+    context 'answer is correct' do
+      before(:each) do
+        game_w_questions.answer_current_question!(game_w_questions.current_game_question.correct_answer_key)
+      end
+
+      context 'answer is correct and question is last' do
+        let!(:game_w_questions) { FactoryGirl.create(:game_with_questions, current_level: Question::QUESTION_LEVELS.max) }
+
+        it 'correct final prize' do
+          expect(game_w_questions.prize).to eq(1000000)
+        end
+
+        it 'game status is won' do
+          expect(game_w_questions.status).to eq(:won)
+        end
+      end
+
+      context 'answer is correct and question is not last' do
+        let!(:game_w_questions) { FactoryGirl.create(:game_with_questions, current_level: 1) }
+
+        it 'level changes to the next' do
+          expect(game_w_questions.current_level).to eq(2)
+        end
+
+        it 'game status is in_progress' do
+          expect(game_w_questions.status).to eq(:in_progress)
+        end
+      end
+
+      context 'answer is correct and time is up' do
+        let!(:game_w_questions) { FactoryGirl.create(:game_with_questions, created_at: 2.hours.ago, finished_at: Time.now) }
+
+        it 'game status is in_progress' do
+          expect(game_w_questions.status).to eq(:timeout)
+        end
+      end
+    end
+
+    context 'answer is not correct' do
+      let!(:incorrect_answer_key) { ['a', 'b', 'c', 'd'].
+        reject { |letter| letter == game_w_questions.current_game_question.correct_answer_key }.sample }
+
+      before(:each) do
+        game_w_questions.answer_current_question!(incorrect_answer_key)
+      end
+
+      it 'finishes the game' do
+        expect(game_w_questions.finished?).to be true
+      end
+
+      it 'finishes with status fail' do
+        expect(game_w_questions.status).to eq :fail
+      end
+    end
+  end
 end

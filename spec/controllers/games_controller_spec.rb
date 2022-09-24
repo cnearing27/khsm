@@ -24,8 +24,8 @@ RSpec.describe GamesController, type: :controller do
 
   context 'Usual user' do
     # Этот блок будет выполняться перед каждым тестом в группе
-  # Логиним юзера с помощью девайзовского метода sign_in
-  before(:each) { sign_in user }
+    # Логиним юзера с помощью девайзовского метода sign_in
+    before(:each) { sign_in user }
 
     it 'creates game' do
       # Создадим пачку вопросов
@@ -76,6 +76,16 @@ RSpec.describe GamesController, type: :controller do
       expect(response).to redirect_to(game_path(game))
       # Флеш пустой
       expect(flash.empty?).to be_truthy
+    end
+
+    it "kick from another's game #show" do
+      anothers_game = FactoryGirl.create(:game_with_questions)
+      # вызываем экшен
+      get :show, id: anothers_game.id
+      # проверяем ответ
+      expect(response.status).not_to eq(200) # статус не 200 ОК
+      expect(response).to redirect_to(root_path) # devise должен отправить на логин
+      expect(flash[:alert]).to be # во flash должен быть прописана ошибка
     end
   end
 end

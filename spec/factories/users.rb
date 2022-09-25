@@ -14,7 +14,7 @@ FactoryGirl.define do
     # email должен быть уникален — при каждом вызове фабрики n будет увеличен
     # поэтому все юзеры будут иметь разные адреса: someguy_1@example.com,
     # someguy_2@example.com, someguy_3@example.com ...
-    sequence(:email) { |n| "someguy_#{n}@example.com" }
+    sequence(:email) { |n| "someguy_#{n}#{n}@example.com" }
 
     # Всегда создается с флажком false, ничего не генерим
     is_admin false

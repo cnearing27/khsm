@@ -8,7 +8,7 @@
 FactoryGirl.define do
   factory :question do
     # Последовательность уникальных текстов вопроса
-    sequence(:text) { |n| "В каком году была космичесая одиссея #{n}?" }
+    sequence(:text) { |n| "Вопрос #{n}?" }
 
     # Уровни генерим от 0 до 14 подряд
     sequence(:level) { |n| n % 15}

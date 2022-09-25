@@ -37,7 +37,7 @@ RSpec.describe GamesController, type: :controller do
       end
 
       it 'create second game' do
-        expect(game_w_questions.finished?).to be_falsey
+        expect(game_w_questions.finished?).to be false
         expect { post :create }.to change(Game, :count).by(0)
         game = assigns(:game)
         expect(game).to be_nil
@@ -47,18 +47,21 @@ RSpec.describe GamesController, type: :controller do
 
   #    context 'create second game' do
   #      before { post :create }
-  #
+#
   #      it 'user has active game' do
-  #        expect(game_w_questions.finished?).to be_falsey
+  #        expect(game_w_questions.finished?).to be false
   #      end
 #
   #      it 'games count is not changed' do
   #        expect { post :create }.to change(Game, :count).by(0)
   #      end
 #
+  #      before { post :create }
+#
   #      let(:game) { assigns(:game) }
 #
   #      it 'game is nil' do
+  #        game = assigns(:game)
   #        expect(game).to be_nil
   #      end
 #
@@ -105,7 +108,7 @@ RSpec.describe GamesController, type: :controller do
         let(:game) { assigns(:game) }
 
         it 'game is not finished' do
-          expect(game.finished?).to be_falsey
+          expect(game.finished?).to be false
         end
 
         it 'right game user' do
@@ -168,7 +171,7 @@ RSpec.describe GamesController, type: :controller do
         let(:game) { assigns(:game) }
 
         it 'game is not finished' do
-          expect(game.finished?).to be_falsey
+          expect(game.finished?).to be false
         end
 
         it 'game level > 0' do
@@ -180,7 +183,7 @@ RSpec.describe GamesController, type: :controller do
         end
 
         it 'not contain some notice/alert' do
-          expect(flash.empty?).to be_truthy
+          expect(flash.empty?).to be true
         end
       end
 
@@ -196,11 +199,11 @@ RSpec.describe GamesController, type: :controller do
 
         it 'is not correct answer' do
           answer_is_correct = assigns(:answer_is_correct)
-          expect(answer_is_correct).to be_falsey
+          expect(answer_is_correct).to be false
         end
 
         it 'end the game' do
-          expect(game.finished?).to be_truthy
+          expect(game.finished?).to be true
         end
 
         it 'game status is fail' do
@@ -242,7 +245,7 @@ RSpec.describe GamesController, type: :controller do
       let(:game) { assigns(:game) }
 
       it 'game is finished' do
-        expect(game.finished?).to be_truthy
+        expect(game.finished?).to be true
       end
 
       it 'game prize = 1000' do
@@ -259,7 +262,7 @@ RSpec.describe GamesController, type: :controller do
       end
 
       it 'not contain some notice/alert' do
-        expect(flash.empty?).to be_falsey
+        expect(flash.empty?).to be false
       end
     end
 
@@ -287,15 +290,15 @@ RSpec.describe GamesController, type: :controller do
       # Проверяем, что у текущего вопроса нет подсказок
       expect(game_w_questions.current_game_question.help_hash[:audience_help]).not_to be
       # И подсказка не использована
-      expect(game_w_questions.audience_help_used).to be_falsey
+      expect(game_w_questions.audience_help_used).to be false
 
       # Пишем запрос в контроллер с нужным типом (put — не создаёт новых сущностей, но что-то меняет)
       put :help, id: game_w_questions.id, help_type: :audience_help
       game = assigns(:game)
 
       # Проверяем, что игра не закончилась, что флажок установился, и подсказка записалась
-      expect(game.finished?).to be_falsey
-      expect(game.audience_help_used).to be_truthy
+      expect(game.finished?).to be false
+      expect(game.audience_help_used).to be true
       expect(game.current_game_question.help_hash[:audience_help]).to be
       expect(game.current_game_question.help_hash[:audience_help].keys).to contain_exactly('a', 'b', 'c', 'd')
       expect(response).to redirect_to(game_path(game))

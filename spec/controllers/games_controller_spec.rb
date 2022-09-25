@@ -169,5 +169,34 @@ RSpec.describe GamesController, type: :controller do
       expect(response).to redirect_to(game_path(game_w_questions))
       expect(flash[:alert]).to be
     end
+
+    context 'answer is incorrect' do
+      let(:game) { assigns(:game) }
+      let(:incorrect_answer_key) { ['a', 'b', 'c', 'd'].
+        reject { |letter| letter == game_w_questions.current_game_question.correct_answer_key }.sample }
+
+      before { put :answer, id: game_w_questions.id, letter: incorrect_answer_key }
+
+      it 'is not correct answer' do
+        answer_is_correct = assigns(:answer_is_correct)
+        expect(answer_is_correct).to be_falsey
+      end
+
+      it 'end the game' do
+        expect(game.finished?).to be_truthy
+      end
+
+      it 'game status is fail' do
+        expect(game.status).to be :fail
+      end
+
+      it 'redirect to user profile' do
+        expect(response).to redirect_to(user_path(user))
+      end
+
+      it 'takes alert' do
+        expect(flash[:alert]).to be
+      end
+    end
   end
 end

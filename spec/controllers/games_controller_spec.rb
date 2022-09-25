@@ -20,6 +20,58 @@ RSpec.describe GamesController, type: :controller do
       expect(response).to redirect_to(new_user_session_path) # devise должен отправить на логин
       expect(flash[:alert]).to be # во flash должен быть прописана ошибка
     end
+
+    context 'kick from #create' do
+      before { post :create }
+
+      it "don't create new game" do
+        expect change(Game, :count).by(0)
+      end
+
+      it 'responce status is not 200' do
+        expect(response.status).not_to eq(200)
+      end
+
+      it 'redirect to sign in' do
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it 'takes alert' do
+        expect(flash[:alert]).to be
+      end
+    end
+
+    context 'kick from #answer' do
+      before { put :answer, id: game_w_questions.id }
+
+      it 'responce status is not 200' do
+        expect(response.status).not_to eq(200)
+      end
+
+      it 'redirect to sign in' do
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it 'takes alert' do
+        expect(flash[:alert]).to be
+      end
+    end
+
+    context 'kick from #take_money' do
+      before { put :take_money, id: game_w_questions.id }
+
+      it 'responce status is not 200' do
+        expect(response.status).not_to eq(200)
+      end
+
+      it 'redirect to sign in' do
+        expect(response).to redirect_to(new_user_session_path)
+      end
+
+      it 'takes alert' do
+        expect(flash[:alert]).to be
+      end
+    end
   end
 
   context 'Usual user' do

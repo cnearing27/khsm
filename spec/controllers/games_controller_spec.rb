@@ -105,5 +105,17 @@ RSpec.describe GamesController, type: :controller do
 
       expect(flash.empty?).to be_falsey
     end
+
+    it "can't start second game" do
+      expect(game_w_questions.finished?).to be_falsey
+
+      expect { post :create }.to change(Game, :count).by(0)
+
+      game = assigns(:game)
+      expect(game).to be_nil
+
+      expect(response).to redirect_to(game_path(game_w_questions))
+      expect(flash[:alert]).to be
+    end
   end
 end

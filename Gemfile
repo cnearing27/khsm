@@ -29,3 +29,10 @@ group :production do
   gem 'rails_12factor'
   gem 'pg'
 end
+
+group :test do
+  gem 'capybara'
+  # Этот гем позволяет сохранять и открывать скриншот страницы
+  # с результатом активности юзера
+  gem 'launchy'
+end

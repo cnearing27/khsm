@@ -104,6 +104,37 @@ class GameQuestion < ActiveRecord::Base
     end
   end
 
+  def add_fifty_fifty
+    self.help_hash[:fifty_fifty] = [
+      correct_answer_key,
+      (%w(a b c d) - [correct_answer_key]).sample
+    ]
+
+    save
+  end
+
+  # Генерируем в help_hash случайное распределение по вариантам и сохраняем объект
+  def add_audience_help
+    # Массив ключей
+    keys_to_use = keys_to_use_in_help
+
+    self.help_hash[:audience_help] =
+      GameHelpGenerator.audience_distribution(keys_to_use, correct_answer_key)
+
+    save
+  end
+
+  # Добавляем в help_hash подсказку друга и сохраняем объект
+  def add_friend_call
+    # Массив ключей
+    keys_to_use = keys_to_use_in_help
+
+    self.help_hash[:friend_call] =
+      GameHelpGenerator.friend_call(keys_to_use, correct_answer_key)
+
+    save
+  end
+
   private
 
   def keys_to_use_in_help

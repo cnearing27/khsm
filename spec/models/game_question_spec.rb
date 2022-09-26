@@ -78,4 +78,25 @@ RSpec.describe GameQuestion, type: :model do
       expect(gq.help_hash).to eq({some_key1: 'blabla1', 'some_key2' => 'blabla2'})
     end
   end
+
+  describe '#fifty_fifty' do
+    before do
+      expect(game_question.help_hash).not_to include(:fifty_fifty)
+      game_question.add_fifty_fifty
+    end
+
+    it 'help_hash include 50/50' do
+      expect(game_question.help_hash).to include(:fifty_fifty)
+    end
+
+    let(:ff) { game_question.help_hash[:fifty_fifty] }
+
+    it 'help_hash include right key' do
+      expect(ff).to include('b')
+    end
+
+    it 'help_hash include only 2 keys' do
+      expect(ff.size).to eq 2
+    end
+  end
 end

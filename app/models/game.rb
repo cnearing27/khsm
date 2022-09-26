@@ -170,7 +170,11 @@ class Game < ActiveRecord::Base
     raise ArgumentError.new('wrong help_type') unless help_types.include?(help_type)
     unless self["#{help_type}_used"]
       self["#{help_type}_used"] = true
-      current_game_question.add_fifty_fifty
+      case help_type
+      when :fifty_fifty then current_game_question.add_fifty_fifty
+      when :audience_help then current_game_question.add_audience_help
+      when :friend_call then current_game_question.add_friend_call
+      end
       save
     end
  end

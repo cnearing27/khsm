@@ -269,33 +269,78 @@ RSpec.describe GamesController, type: :controller do
 
   describe '#help' do
     context 'when registered user' do
-      before do
-        sign_in user
-        expect(game_w_questions.current_game_question.help_hash[:audience_help]).not_to be
-        expect(game_w_questions.audience_help_used).to be false
-        put :help, id: game_w_questions.id, help_type: :audience_help
+      before { sign_in user }
+
+      context 'before using audience_help' do
+        it 'help_hash not include audience_help' do
+          expect(game_w_questions.current_game_question.help_hash[:audience_help]).not_to be
+        end
+
+        it 'audience_help not used' do
+          expect(game_w_questions.audience_help_used).to be false
+        end
       end
 
-      let(:game) { assigns(:game) }
+      context 'use audience_help' do
+        before { put :help, id: game_w_questions.id, help_type: :audience_help }
 
-      it 'game is not finished' do
-        expect(game.finished?).to be false
+        let(:game) { assigns(:game) }
+
+        it 'game is not finished' do
+          expect(game.finished?).to be false
+        end
+
+        it 'audience help used' do
+          expect(game.audience_help_used).to be true
+        end
+
+        it 'right type in help_hash' do
+          expect(game.current_game_question.help_hash[:audience_help]).to be
+        end
+
+        it 'has right keys in help_hash' do
+          expect(game.current_game_question.help_hash[:audience_help].keys).to contain_exactly('a', 'b', 'c', 'd')
+        end
+
+        it 'redirect to game page' do
+          expect(response).to redirect_to(game_path(game))
+        end
       end
 
-      it 'audience help used' do
-        expect(game.audience_help_used).to be true
+      context 'before using 50/50' do
+        it 'help_hash not include 50/50' do
+          expect(game_w_questions.current_game_question.help_hash[:fifty_fifty]).not_to be
+        end
+
+        it 'fifty_fifty not used' do
+          expect(game_w_questions.fifty_fifty_used).to be false
+        end
       end
 
-      it 'right type in help_hash' do
-        expect(game.current_game_question.help_hash[:audience_help]).to be
-      end
+      context 'use 50/50' do
+        before { put :help, id: game_w_questions.id, help_type: :fifty_fifty }
 
-      it 'has right keys in help_hash' do
-        expect(game.current_game_question.help_hash[:audience_help].keys).to contain_exactly('a', 'b', 'c', 'd')
-      end
+        let(:game) { assigns(:game) }
 
-      it 'redirect to game page' do
-        expect(response).to redirect_to(game_path(game))
+        it 'game is not finished' do
+          expect(game.finished?).to be false
+        end
+
+        it 'fifty_fifty help used' do
+          expect(game.fifty_fifty_used).to be true
+        end
+
+        it 'right type in help_hash' do
+          expect(game.current_game_question.help_hash[:fifty_fifty]).to be
+        end
+
+        it 'has right keys in help_hash' do
+          expect(game.current_game_question.help_hash[:fifty_fifty]).to include(game.current_game_question.correct_answer_key)
+        end
+
+        it 'redirect to game page' do
+          expect(response).to redirect_to(game_path(game))
+        end
       end
     end
   end

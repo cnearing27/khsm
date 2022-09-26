@@ -36,43 +36,27 @@ RSpec.describe GamesController, type: :controller do
         end
       end
 
-      it 'create second game' do
-        expect(game_w_questions.finished?).to be false
-        expect { post :create }.to change(Game, :count).by(0)
-        game = assigns(:game)
-        expect(game).to be_nil
-        expect(response).to redirect_to(game_path(game_w_questions))
-        expect(flash[:alert]).to be
-      end
+      context 'create second game' do
+        before do
+          expect(game_w_questions.finished?).to be false
+          expect { post :create }.to change(Game, :count).by(0)
+        end
 
-  #    context 'create second game' do
-  #      before { post :create }
-#
-  #      it 'user has active game' do
-  #        expect(game_w_questions.finished?).to be false
-  #      end
-#
-  #      it 'games count is not changed' do
-  #        expect { post :create }.to change(Game, :count).by(0)
-  #      end
-#
-  #      before { post :create }
-#
-  #      let(:game) { assigns(:game) }
-#
-  #      it 'game is nil' do
-  #        game = assigns(:game)
-  #        expect(game).to be_nil
-  #      end
-#
-  #      it 'redirect to active game page' do
-  #        expect(response).to redirect_to(game_path(game_w_questions))
-  #      end
-#
-  #      it 'takes alert' do
-  #        expect(flash[:alert]).to be
-  #      end
-  #    end
+        let(:game) { assigns(:game) }
+
+        it 'game is nil' do
+          game = assigns(:game)
+          expect(game).to be_nil
+        end
+
+        it 'redirect to active game page' do
+          expect(response).to redirect_to(game_path(game_w_questions))
+        end
+
+        it 'takes alert' do
+          expect(flash[:alert]).to be
+        end
+      end
     end
 
     context 'when anonymous' do

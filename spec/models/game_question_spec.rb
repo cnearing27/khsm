@@ -79,7 +79,7 @@ RSpec.describe GameQuestion, type: :model do
     end
   end
 
-  describe '#fifty_fifty' do
+  describe '#add_fifty_fifty' do
     before do
       expect(game_question.help_hash).not_to include(:fifty_fifty)
       game_question.add_fifty_fifty
@@ -97,6 +97,27 @@ RSpec.describe GameQuestion, type: :model do
 
     it 'help_hash include only 2 keys' do
       expect(ff.size).to eq 2
+    end
+  end
+
+  describe '#add_friend_call' do
+    before do
+      expect(game_question.help_hash).not_to include(:friend_call)
+      game_question.add_friend_call
+    end
+
+    it 'help_hash include friend_call' do
+      expect(game_question.help_hash).to include(:friend_call)
+    end
+
+    let(:fc) { game_question.help_hash[:friend_call] }
+
+    it 'friend_call in help_hash include text' do
+      expect(fc.index("считает, что это вариант")).to be
+    end
+
+    it 'friend_call in help_hash include letter' do
+      expect(fc).to match(/[ABCD]/)
     end
   end
 end

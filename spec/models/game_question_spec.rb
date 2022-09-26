@@ -63,4 +63,19 @@ RSpec.describe GameQuestion, type: :model do
       expect(ah.keys).to contain_exactly('a', 'b', 'c', 'd')
     end
   end
+
+  describe '#help_hash' do
+    before do
+      expect(game_question.help_hash).to eq({})
+      game_question.help_hash[:some_key1] = 'blabla1'
+      game_question.help_hash['some_key2'] = 'blabla2'
+      expect(game_question.save).to be_truthy
+    end
+
+    let(:gq) { GameQuestion.find(game_question.id) }
+
+    it 'right hash' do
+      expect(gq.help_hash).to eq({some_key1: 'blabla1', 'some_key2' => 'blabla2'})
+    end
+  end
 end

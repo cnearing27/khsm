@@ -10,7 +10,7 @@ RSpec.describe 'users/show', type: :view do
       assign(:games, [FactoryGirl.create(:game)])
 
       stub_template 'users/_game.html.erb' => 'User game goes here'
-      render()
+      render
     end
 
     it 'show player name' do
@@ -29,10 +29,8 @@ RSpec.describe 'users/show', type: :view do
   context 'when anonymous user' do
     before do
       assign(:user, new_user)
-      assign(:games, [FactoryGirl.create(:game)])
 
-      stub_template 'users/_game.html.erb' => 'User game goes here'
-      render()
+      render
     end
 
     it 'not show change password button' do

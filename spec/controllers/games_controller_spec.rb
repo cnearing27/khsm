@@ -268,24 +268,35 @@ RSpec.describe GamesController, type: :controller do
   end
 
   describe '#help' do
-    before { sign_in user }
+    context 'when registered user' do
+      before do
+        sign_in user
+        expect(game_w_questions.current_game_question.help_hash[:audience_help]).not_to be
+        expect(game_w_questions.audience_help_used).to be false
+        put :help, id: game_w_questions.id, help_type: :audience_help
+      end
 
-    it 'uses audience help' do
-      # Проверяем, что у текущего вопроса нет подсказок
-      expect(game_w_questions.current_game_question.help_hash[:audience_help]).not_to be
-      # И подсказка не использована
-      expect(game_w_questions.audience_help_used).to be false
+      let(:game) { assigns(:game) }
 
-      # Пишем запрос в контроллер с нужным типом (put — не создаёт новых сущностей, но что-то меняет)
-      put :help, id: game_w_questions.id, help_type: :audience_help
-      game = assigns(:game)
+      it 'game is not finished' do
+        expect(game.finished?).to be false
+      end
 
-      # Проверяем, что игра не закончилась, что флажок установился, и подсказка записалась
-      expect(game.finished?).to be false
-      expect(game.audience_help_used).to be true
-      expect(game.current_game_question.help_hash[:audience_help]).to be
-      expect(game.current_game_question.help_hash[:audience_help].keys).to contain_exactly('a', 'b', 'c', 'd')
-      expect(response).to redirect_to(game_path(game))
+      it 'audience help used' do
+        expect(game.audience_help_used).to be true
+      end
+
+      it 'right type in help_hash' do
+        expect(game.current_game_question.help_hash[:audience_help]).to be
+      end
+
+      it 'has right keys in help_hash' do
+        expect(game.current_game_question.help_hash[:audience_help].keys).to contain_exactly('a', 'b', 'c', 'd')
+      end
+
+      it 'redirect to game page' do
+        expect(response).to redirect_to(game_path(game))
+      end
     end
   end
 end

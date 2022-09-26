@@ -48,6 +48,15 @@ class GamesController < ApplicationController
     @answer_is_correct = @game.answer_current_question!(params[:letter])
     @game_question = @game.current_game_question
 
+    unless @answer_is_correct
+      # Если ответили неправильно, отправляем юзера на профиль с сообщением
+      flash[:alert] = I18n.t(
+        'controllers.games.bad_answer',
+        answer: @game_question.correct_answer,
+        prize: view_context.number_to_currency(@game.prize)
+      )
+    end
+
     respond_to do |format|
       # Если это html-запрос, то редиректим пользователя в зависимости
       # от ситуации
@@ -55,13 +64,6 @@ class GamesController < ApplicationController
         if @answer_is_correct && !@game.finished?
           redirect_to game_path(@game)
         else
-          # Если ответили неправильно, отправляем юзера на профиль с сообщением
-          flash[:alert] = I18n.t(
-            'controllers.games.bad_answer',
-            answer: @game_question.correct_answer,
-            prize: view_context.number_to_currency(@game.prize)
-          )
-
           redirect_to user_path(current_user)
         end
       end
